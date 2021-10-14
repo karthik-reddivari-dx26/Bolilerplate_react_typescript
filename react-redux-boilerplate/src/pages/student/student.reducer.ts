@@ -22,7 +22,7 @@ export default (state: StudentState = intialState, action: any): StudentState =>
         case 'ADD_STUDENT':
             let stud = state.students
             stud.push( action.payload)
-            return { students: stud};
+            return { ...state,students: stud};
 
         case 'VIEW_STUDENT':{
             return { ...state,students:action.payload};
@@ -31,7 +31,7 @@ export default (state: StudentState = intialState, action: any): StudentState =>
         case 'DELETE_STUDENT':{
             let index = state.students.findIndex(element => element._id === action.payload._id)
             state.students.splice(index,1)
-            return { ...state};
+            return {...state,students:state.students};
         }
         default:
             return state

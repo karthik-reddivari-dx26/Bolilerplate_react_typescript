@@ -15,11 +15,10 @@ const Student = (props: any) => {
     const onFinish = (data: any) => {
         dispatch(props.addStudents(data.user))
     };
-
   
     useEffect(() => {
       dispatch(props.viewStudents())
-    }, []);
+    }, [props.students]);
 
     const columns = [
         {
