@@ -1,9 +1,9 @@
-import { Form, Input, InputNumber, Button, Table } from 'antd';
+import { Form, Input, InputNumber, Button, Table, Space } from 'antd';
 import { useEffect, useState } from 'react';
 import 'antd/dist/antd.css';
 import { connect, useDispatch } from 'react-redux';
 import { IRootState } from '../../store/store';
-import { addStudents, viewStudents } from '../student/student.reducer';
+import { addStudents, viewStudents,deleteStudent } from '../student/student.reducer';
 
 export interface IStudentsProps extends StateProps, DispatchProps { }
 
@@ -11,27 +11,15 @@ export interface IStudentsProps extends StateProps, DispatchProps { }
 const Student = (props: any) => {
     const dispatch = useDispatch();
     const [studentData, setStudentData]: any = useState([]);
+
     const onFinish = (data: any) => {
-        props.addStudents(data.user, dispatch)
+        dispatch(props.addStudents(data.user))
     };
 
+  
     useEffect(() => {
-        props.viewStudents(dispatch);
-
+      dispatch(props.viewStudents())
     }, []);
-
-    useEffect(() => {
-        console.log("props.students :: ",props.students);
-        props.students.map((item: any, i:number) => {
-            setStudentData([{
-                key: i,
-                firstName: item.firstName,
-                lastName: item.lastName,
-                email: item.email,
-                contact: item.contact ? item.contact : ""
-            }])
-        })
-    }, [props.students])
 
     const columns = [
         {
@@ -50,36 +38,46 @@ const Student = (props: any) => {
             key: 'email',
         },
         {
-            title: 'Contact',
-            dataIndex: 'contact',
-            key: 'contact',
+            title: 'Action',
+            dataIndex: 'action',
+            key: 'action',
+            render: (text:any, record:any) => (
+                <Space size="middle">
+                    <Button type="primary"  onClick={() => dispatch(props.deleteStudent(record._id))} danger >
+                        Delete
+                    </Button>
+                </Space>
+            ),
         },
     ];
-
     return (
-        <div>
-            <h1>Student Registration</h1>
+        <div className='form-class'>
+            <h1 style={{marginLeft:550,marginTop:100}}>Crd Operation React Redux</h1>
             <Form name="nest-messages"
                 onFinish={onFinish}
+                layout='horizontal'
+                style={{width:'50%',marginLeft:450,marginTop:100}}
             >
-
                 <Form.Item
                     name={['user', 'firstName']}
                     label="Name"
+                    style={{width:'50%'}}
                 >
-                    <Input />
+                    <Input style={{marginLeft:40}} />
                 </Form.Item>
                 <Form.Item
                     name={['user', 'lastName']}
                     label="Last Name"
+                    style={{width:'53%'}}
                 >
-                    <Input />
+                    <Input style={{marginLeft:10}} />
                 </Form.Item>
                 <Form.Item
                     name={['user', 'email']}
                     label="Email"
+                    style={{width:'50%'}}
                 >
-                    <Input />
+                    <Input style={{marginLeft:40}} />
                 </Form.Item>
                 <Form.Item>
                     <Button type="primary" htmlType="submit" >
@@ -87,18 +85,21 @@ const Student = (props: any) => {
                     </Button>
                 </Form.Item>
             </Form>
-            <Table columns={columns} dataSource={studentData} />
+                <Table dataSource={props.students} columns={columns} style={{width:'50%',marginLeft:450,marginTop:100}}/>;
         </div>
     )
 }
 
-const mapStateToProps = (storeState: IRootState) => ({
-    students: storeState.student.students
-});
-const mapDispatchToProps = (dispatch:any) => {
+const mapStateToProps = (storeState: IRootState) => {
+    return {
+        students: storeState.student.students,
+    }
+};
+const mapDispatchToProps = (dispatch: any) => {
     return {
         addStudents,
-        viewStudents
+        viewStudents,
+        deleteStudent
     }
 }
 

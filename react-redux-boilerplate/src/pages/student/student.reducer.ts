@@ -2,11 +2,12 @@ import axios from 'axios';
 
 export const ACTION_TYPES = {
     ADD_STUDENT: 'ADD_STUDENT',
-    VIEW_STUDENT: 'VIEW_STUDENT'
+    VIEW_STUDENT: 'VIEW_STUDENT',
+    DELETE_STUDENT: 'DELETE_STUDENT'
 };
 
 const intialState = {
-    students: []
+    students: [] as  Array<any>
 }
 
 export type StudentState = Readonly<typeof intialState>
@@ -18,11 +19,19 @@ export type StudentState = Readonly<typeof intialState>
 export default (state: StudentState = intialState, action: any): StudentState => {
 
     switch (action.type) {
-        case 'ADD_STUDENT': {
-            return { ...state, students: action.payload };
+        case 'ADD_STUDENT':
+            let stud = state.students
+            stud.push( action.payload)
+            return { students: stud};
+
+        case 'VIEW_STUDENT':{
+            return { ...state,students:action.payload};
         }
-        case 'VIEW_STUDENT': {
-            return { ...state, students: action.payload }
+
+        case 'DELETE_STUDENT':{
+            let index = state.students.findIndex(element => element._id === action.payload._id)
+            state.students.splice(index,1)
+            return { ...state};
         }
         default:
             return state
@@ -32,20 +41,27 @@ export default (state: StudentState = intialState, action: any): StudentState =>
 
 //action
 
-export const addStudents = async (data: any, dispatch: any) => {
-    const finalData: any = await axios.post('https://mongodbconnection.herokuapp.com/studentDetail', data)
-    dispatch({
+export const addStudents =  (data: any) => async (dispatch:any) => {
+    const addStudentData: any = await axios.post('https://mongodbconnection.herokuapp.com/studentDetail', data)
+    await dispatch({
         type: ACTION_TYPES.ADD_STUDENT,
-        payload: finalData.data
+        payload: addStudentData.data
     })
 }
 
 
-export const viewStudents = async (dispatch: any) => {
-
+export const viewStudents = () => async (dispatch: any) => {
     const studentData: any = await axios.get('https://mongodbconnection.herokuapp.com/studentDetail')
-    dispatch({
-        type: ACTION_TYPES.ADD_STUDENT,
-        payload: studentData.data,
+    await dispatch({
+        type: ACTION_TYPES.VIEW_STUDENT,
+        payload: studentData.data
+    })
+}
+
+export const deleteStudent = (id:any) => async (dispatch: any) => {
+    const deleteStudentData: any = await axios.delete(`https://mongodbconnection.herokuapp.com/studentDetail/${id}`)
+    await dispatch({
+        type: ACTION_TYPES.DELETE_STUDENT,
+        payload: deleteStudentData.data
     })
 }
