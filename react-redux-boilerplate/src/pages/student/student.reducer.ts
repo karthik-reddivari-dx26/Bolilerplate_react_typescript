@@ -10,7 +10,7 @@ export const ACTION_TYPES = {
 
 const intialState = {
     students: [] as Array<any>,
-    studentDetail: {} 
+    studentDetail: {}
 }
 
 export type StudentState = Readonly<typeof intialState>
@@ -41,7 +41,7 @@ export default (state: StudentState = intialState, action: any): StudentState =>
             state.students[index].firstName = action.payload.firstName
             state.students[index].lastName = action.payload.lastName
             state.students[index].email = action.payload.email
-            return { ...state,students:state.students };
+            return { ...state, students: state.students };
         }
         case 'GET_STUDENT': {
             return { ...state, studentDetail: action.payload };
